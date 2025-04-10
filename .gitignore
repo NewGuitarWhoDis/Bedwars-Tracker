@@ -1,0 +1,42 @@
+# Java build files
+/build/
+/out/
+/bin/
+
+# Gradle files
+.gradle/
+.gradle-cache/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+*.swp
+.vscode/
+*.code-workspace
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Logs and temp
+*.log
+*.tmp
+*.bak
+*.swp
+
+# User files
+*.class
+*.jar
+*.war
+*.ear
+
+# Minecraft cache
+run/
+remappedSrc/
+
+# Fabric remap cache
+.cache/

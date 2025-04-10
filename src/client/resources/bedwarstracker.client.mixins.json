@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"package": "me.newguitarwhodis.mixin.client",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"ExampleClientMixin",
+		"ChatHudMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
