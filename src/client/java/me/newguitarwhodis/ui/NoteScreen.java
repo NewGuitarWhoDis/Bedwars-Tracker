@@ -10,9 +10,11 @@ import net.minecraft.text.Text;
 
 public class NoteScreen extends Screen {
     private final String target;
-    public NoteScreen(String name) {
+    private final String returnScreen;
+    public NoteScreen(String name, String screen) {
 
         super(Text.literal("Note for " + name));
+        this.returnScreen = screen;
         this.target = name;
     }
 
@@ -41,13 +43,23 @@ public class NoteScreen extends Screen {
             PlayerStats targetStats = StatsDatabase.get(target);
             targetStats.note = Chosennote;
 
-            this.client.setScreen(new FullStatsScreen());
+            if(returnScreen == "stats") {
+                this.client.setScreen(new StatScreen());
+            }
+            else if(returnScreen == "full") {
+                this.client.setScreen(new FullStatsScreen());
+            }
 
         }).dimensions(this.width / 2 + 15, this.height / 2 + 20, 100, 20).build());
 
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Close"), button -> {
 
-            this.client.setScreen(new StatScreen());
+            if(returnScreen == "stats") {
+                this.client.setScreen(new StatScreen());
+            }
+            else if(returnScreen == "full") {
+                this.client.setScreen(new FullStatsScreen());
+            }
 
         }).dimensions(this.width / 2 - 115, this.height / 2 + 20 , 100, 20).build());
     }

@@ -96,7 +96,11 @@ public class StatsListWidget extends EntryListWidget<StatsListWidget.Entry> {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            return false; // Or handle clicks to open a note screen
+            if (button == 0) { // left click
+                MinecraftClient.getInstance().setScreen(new NoteScreen(name, "full"));
+                return true;
+            }
+            return false;
         }
     }
 }

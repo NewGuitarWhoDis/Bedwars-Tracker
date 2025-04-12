@@ -100,7 +100,7 @@ public class PlayerListWidget extends EntryListWidget<PlayerListWidget.PlayerEnt
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (button == 0) { // left click
-                MinecraftClient.getInstance().setScreen(new NoteScreen(name));
+                MinecraftClient.getInstance().setScreen(new NoteScreen(name, "stats"));
                 return true;
             }
             return false;
