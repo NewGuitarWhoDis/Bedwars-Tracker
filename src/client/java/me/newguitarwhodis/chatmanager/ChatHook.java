@@ -30,22 +30,66 @@ public class ChatHook {
 //                        Text.literal("💀 Victim: " + victim + ", Killer: " + killer)
 //                );
 
-                // Always update killer/victim totals
-                PlayerStats killerStats = StatsDatabase.get(killer);
-                killerStats.totalKills++;
+                if (isOnlinePlayer(killer) && isOnlinePlayer(victim)) {
+                    // Always update killer/victim totals
+                    PlayerStats killerStats = StatsDatabase.get(killer);
+                    killerStats.totalKills++;
 
-                PlayerStats victimStats = StatsDatabase.get(victim);
-                victimStats.totalDeaths++;
+                    PlayerStats victimStats = StatsDatabase.get(victim);
+                    victimStats.totalDeaths++;
 
-                // Only update "kills on you" and "deaths to you" if the local player is involved
-                if (victim.equals(local)) {
-                    killerStats.killsOnYou++;
-                } else if (killer.equals(local)) {
-                    victimStats.deathsToYou++;
+                    // Only update "kills on you" and "deaths to you" if the local player is involved
+                    if (victim.equals(local)) {
+                        killerStats.killsOnYou++;
+                    } else if (killer.equals(local)) {
+                        victimStats.deathsToYou++;
+                    }
+
+//                    MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
+//                            Text.literal("💀 Victim: " + victim + ", Killer: " + killer)
+//                    );
+
+                    StatsDatabase.save();
                 }
+                else if (isOnlinePlayer(victim) &&  (killer == "void")) {
+                    PlayerStats victimStats = StatsDatabase.get(victim);
+                    victimStats.voidDeaths++;
+                    StatsDatabase.save();
+                }
+                else {
+//                    MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
+//                        Text.literal("not a player name")
+//                );
+                }
+            }
+        } else if (raw.endsWith("!")) {
+            String[] words = raw.split(" ");
+            if (words.length >= 3) {
+                String victim = words[0];
+                String killer = words[words.length - 3].replace(".", "");
+                String local = MinecraftClient.getInstance().player.getName().getString();
 
-                StatsDatabase.save();
+                if (isOnlinePlayer(killer) && isOnlinePlayer(victim)) {
+                    // Always update killer/victim totals
+                    PlayerStats killerStats = StatsDatabase.get(killer);
+                    killerStats.totalKills++;
+
+                    PlayerStats victimStats = StatsDatabase.get(victim);
+                    victimStats.totalDeaths++;
+
+                    // Only update "kills on you" and "deaths to you" if the local player is involved
+                    if (victim.equals(local)) {
+                        killerStats.killsOnYou++;
+                    } else if (killer.equals(local)) {
+                        victimStats.deathsToYou++;
+                    }
+                }
             }
         }
+    }
+
+    public static boolean isOnlinePlayer(String name) {
+        return MinecraftClient.getInstance().getNetworkHandler().getPlayerList().stream()
+                .anyMatch(entry -> entry.getProfile().getName().equalsIgnoreCase(name));
     }
 }

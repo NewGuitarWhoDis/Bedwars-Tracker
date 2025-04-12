@@ -29,13 +29,19 @@ public class PlayerListWidget extends EntryListWidget<PlayerListWidget.PlayerEnt
     }
 
     // Updated method to support all 5 stats
-    public void addPlayer(String name, int killsOnYou, int deathsToYou, int totalKills, int totalDeaths) {
-        this.addEntry(new PlayerEntry(name, killsOnYou, deathsToYou, totalKills, totalDeaths));
+    public void addPlayer(String name, int killsOnYou, int deathsToYou, int totalKills, int totalDeaths, int voidDeaths, String note) {
+        this.addEntry(new PlayerEntry(name, killsOnYou, deathsToYou, totalKills, totalDeaths, voidDeaths, note));
     }
 
     public void sortByKD() {
         this.children().sort(Comparator.comparingDouble(entry -> -((PlayerEntry) entry).getKD()));
     }
+
+    @Override
+    public int getRowWidth() {
+        return this.width - 40; // Wider rows
+    }
+
 
     public class PlayerEntry extends Entry<PlayerEntry> {
         private final String name;
@@ -43,13 +49,16 @@ public class PlayerListWidget extends EntryListWidget<PlayerListWidget.PlayerEnt
         private final int deathsToYou;
         private final int totalKills;
         private final int totalDeaths;
-
-        public PlayerEntry(String name, int killsOnYou, int deathsToYou, int totalKills, int totalDeaths) {
+        private final int voidDeaths;
+        private final String note;
+        public PlayerEntry(String name, int killsOnYou, int deathsToYou, int totalKills, int totalDeaths, int voidDeaths, String note) {
             this.name = name;
             this.killsOnYou = killsOnYou;
             this.deathsToYou = deathsToYou;
             this.totalKills = totalKills;
             this.totalDeaths = totalDeaths;
+            this.voidDeaths = voidDeaths;
+            this.note = note;
         }
 
         @Override
@@ -59,51 +68,43 @@ public class PlayerListWidget extends EntryListWidget<PlayerListWidget.PlayerEnt
             double kd = (totalDeaths == 0) ? totalKills : (double) totalKills / totalDeaths;
             int kdColor = kd >= 2.0 ? 0x55FF55 : kd >= 1.0 ? 0xFFFF55 : 0xFF5555;
 
-// Padding values
-            int horizontalPadding = 8;
-            int boxLeft = x - horizontalPadding;
-            int boxRight = x + entryWidth + horizontalPadding;
-
-// Background box with padding
+            // Background box
+            int boxPadding = 8;
+            int boxLeft = x - boxPadding;
+            int boxRight = x + entryWidth + boxPadding;
             context.fill(boxLeft, y, boxRight, y + entryHeight, 0x66000000);
 
-// Player name (left-aligned inside padded box)
-            Text nameText = Text.literal(name).formatted(Formatting.BOLD);
-            context.drawText(client.textRenderer, nameText, boxLeft + 10, y + 4, 0xFFFFFF, false);
+            // Title row (name)
+            context.drawText(client.textRenderer, Text.literal(name).formatted(Formatting.BOLD), boxLeft + 10, y + 4, 0xFFFFFF, false);
 
-// Define stat strings
-            Text koyText = Text.literal("Kills on You: " + killsOnYou);
-            Text dtyText = Text.literal("Deaths to You: " + deathsToYou);
-            Text tkText  = Text.literal("Total Kills: " + totalKills);
-            Text tdText  = Text.literal("Total Deaths: " + totalDeaths);
-            String kdStr = "K/D: " + String.format("%.2f", kd);
-            Text kdText  = Text.literal(kdStr);
+            // Divide the full row into columns
+            int colCount = 6;
+            int colSpacing = entryWidth / colCount;
+            int statY1 = y + 18;
+            int statY2 = y + 30;
 
-// Layout settings
-            int spacing = 20;
-            int row1Y = y + 18;
-            int row2Y = y + 30;
-            int startX = boxLeft + 10;
+            context.drawText(client.textRenderer, Text.literal("Kills on You: " + killsOnYou), x + 0 * colSpacing + 8, statY1, 0xFF5555, false);
+            context.drawText(client.textRenderer, Text.literal("Deaths to You: " + deathsToYou), x + 1 * colSpacing + 8, statY1, 0x55FF55, false);
+            context.drawText(client.textRenderer, Text.literal("Void Deaths: " + voidDeaths), x + 2 * colSpacing + 8, statY1, 0x6C3BAA, false);
 
-// === Row 1 ===
-            int textX = startX;
-            context.drawText(client.textRenderer, koyText, textX, row1Y, 0xFF5555, false);
-            textX += client.textRenderer.getWidth(koyText) + spacing;
+            context.drawText(client.textRenderer, Text.literal("Total Kills: " + totalKills), x + 0 * colSpacing + 8, statY2, 0xAAAAFF, false);
+            context.drawText(client.textRenderer, Text.literal("Total Deaths: " + totalDeaths), x + 1 * colSpacing + 8, statY2, 0xAAAAFF, false);
+            context.drawText(client.textRenderer, Text.literal("K/D: " + String.format("%.2f", kd)), x + 2 * colSpacing + 8, statY2, kdColor, false);
 
-            context.drawText(client.textRenderer, dtyText, textX, row1Y, 0x55FF55, false);
-
-// === Row 2 ===
-            textX = startX;
-            context.drawText(client.textRenderer, tkText, textX, row2Y, 0xAAAAFF, false);
-            textX += client.textRenderer.getWidth(tkText) + spacing;
-
-            context.drawText(client.textRenderer, tdText, textX, row2Y, 0xAAAAFF, false);
-            textX += client.textRenderer.getWidth(tdText) + spacing;
-
-            context.drawText(client.textRenderer, kdText, textX, row2Y, kdColor, false);
-
+            if (hovered && note != null && !note.isEmpty()) {
+                context.drawTooltip(client.textRenderer, Text.literal(note), mouseX, mouseY);
+            }
         }
 
+
+        @Override
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            if (button == 0) { // left click
+                MinecraftClient.getInstance().setScreen(new NoteScreen(name));
+                return true;
+            }
+            return false;
+        }
 
         public double getKD() {
             return (totalDeaths == 0) ? totalKills : (double) totalKills / totalDeaths;

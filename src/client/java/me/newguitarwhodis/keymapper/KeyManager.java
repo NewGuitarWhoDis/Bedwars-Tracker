@@ -9,9 +9,9 @@ public class KeyManager {
     public static KeyBinding OPEN_GUI;
     public static void register() {
         OPEN_GUI = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.bedwarstracker.opengui",
+                "Open GUI",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_APOSTROPHE,
-                "category.bedwarstracker"));
+                "Bedwars Tracker"));
     }
 }
