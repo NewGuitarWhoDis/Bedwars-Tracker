@@ -1,5 +1,6 @@
 package me.newguitarwhodis.chat;
 
+import me.newguitarwhodis.ui.notifications.ScreenNotificationRenderer;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import me.newguitarwhodis.database.StatsDatabase;
@@ -11,6 +12,7 @@ public class ChatManager {
         // Keep this if you want to catch any system messages that DO come through
         ClientReceiveMessageEvents.CHAT.register((message, signedMessage, sender, params, receptionSide) -> {
             handleKillMessage(message.getString());
+            manageGameStart(message.getString());
         });
     }
 
@@ -23,6 +25,8 @@ public class ChatManager {
                 String victim = words[0];
                 String killer = words[words.length - 1].replace(".", "");
                 String local = MinecraftClient.getInstance().player.getName().getString();
+
+                if (killer.contains("§k") || victim.contains("§k")) return;
 
 //                MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
 //                        Text.literal("💀 Victim: " + victim + ", Killer: " + killer)
@@ -85,6 +89,42 @@ public class ChatManager {
             }
         }
     }
+
+    public static void manageGameStart(String rawMessage) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        String raw = rawMessage.trim();
+        if (raw.contains("The game starts in 1 second!")) {
+
+            // Run the task after 1 second (20 ticks)
+            client.execute(() -> {
+                try {
+                    Thread.sleep(2000); // wait 1 second
+                } catch (InterruptedException ignored) {
+                }
+
+                if (client.getNetworkHandler() == null || client.player == null) return;
+
+                StringBuilder knownPlayers = new StringBuilder();
+                for (var entry : client.getNetworkHandler().getPlayerList()) {
+                    String name = entry.getProfile().getName();
+                    if (!name.equals(client.player.getName().getString()) && StatsDatabase.contains(name)) {
+                        if (!knownPlayers.isEmpty()) knownPlayers.append(", ");
+                        knownPlayers.append(name);
+                    }
+                }
+
+                if (!knownPlayers.isEmpty()) {
+                    String title = "You have played against:";
+                    String message = knownPlayers.toString();
+
+                    // Display notification via your notification renderer
+                    ScreenNotificationRenderer.INSTANCE
+                            .show(100, title, message, null);
+                }
+            });
+        }
+    }
+
 
     public static boolean isOnlinePlayer(String name) {
         return MinecraftClient.getInstance().getNetworkHandler().getPlayerList().stream()

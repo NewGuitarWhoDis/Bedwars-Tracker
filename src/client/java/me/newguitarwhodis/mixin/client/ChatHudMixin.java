@@ -8,6 +8,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static me.newguitarwhodis.chat.ChatManager.manageGameStart;
+
 @Mixin(ChatHud.class)
 public class ChatHudMixin {
 
@@ -15,5 +17,6 @@ public class ChatHudMixin {
     private void onChatMessage(Text message, CallbackInfo ci) {
         String raw = message.getString();
         ChatManager.handleKillMessage(raw); // reuse your logic!
+        manageGameStart(raw);
     }
 }

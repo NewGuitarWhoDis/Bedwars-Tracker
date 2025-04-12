@@ -47,6 +47,11 @@ public class StatsDatabase {
         return database.computeIfAbsent(playerName, k -> new PlayerStats());
     }
 
+    public static boolean contains(String name) {
+        return getAll().containsKey(name);
+    }
+
+
     public static Map<String, PlayerStats> getAll() {
         return database;
     }
