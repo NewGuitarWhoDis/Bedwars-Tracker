@@ -1,19 +1,14 @@
-package me.newguitarwhodis.ui;
+package me.newguitarwhodis.ui.components;
 
-import com.mojang.authlib.GameProfile;
+import me.newguitarwhodis.ui.screens.PlayerEditScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.EntryListWidget;
-import net.minecraft.client.realms.dto.PlayerInfo;
-import net.minecraft.client.texture.PlayerSkinProvider;
-import net.minecraft.client.util.SkinTextures;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 
 import java.util.Comparator;
-import java.util.UUID;
 
 public class PlayerListWidget extends EntryListWidget<PlayerListWidget.PlayerEntry> {
     private final MinecraftClient client;
@@ -100,7 +95,7 @@ public class PlayerListWidget extends EntryListWidget<PlayerListWidget.PlayerEnt
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (button == 0) { // left click
-                MinecraftClient.getInstance().setScreen(new NoteScreen(name, "stats"));
+                MinecraftClient.getInstance().setScreen(new PlayerEditScreen(name, "stats", note));
                 return true;
             }
             return false;

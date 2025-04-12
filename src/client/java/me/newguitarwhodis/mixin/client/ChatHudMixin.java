@@ -1,6 +1,6 @@
 package me.newguitarwhodis.mixin.client;
 
-import me.newguitarwhodis.chatmanager.ChatHook;
+import me.newguitarwhodis.chat.ChatManager;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,6 +14,6 @@ public class ChatHudMixin {
     @Inject(method = "addMessage", at = @At("HEAD"))
     private void onChatMessage(Text message, CallbackInfo ci) {
         String raw = message.getString();
-        ChatHook.handleKillMessage(raw); // reuse your logic!
+        ChatManager.handleKillMessage(raw); // reuse your logic!
     }
 }

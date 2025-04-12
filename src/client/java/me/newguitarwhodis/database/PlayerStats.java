@@ -1,4 +1,4 @@
-package me.newguitarwhodis.stats;
+package me.newguitarwhodis.database;
 
 public class PlayerStats {
     public int killsOnYou = 0;

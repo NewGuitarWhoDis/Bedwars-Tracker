@@ -1,6 +1,7 @@
-package me.newguitarwhodis.ui;
+package me.newguitarwhodis.ui.components;
 
-import me.newguitarwhodis.stats.PlayerStats;
+import me.newguitarwhodis.database.PlayerStats;
+import me.newguitarwhodis.ui.screens.PlayerEditScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -11,8 +12,8 @@ import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.text.Text;
 
 
-public class StatsListWidget extends EntryListWidget<StatsListWidget.Entry> {
-    public StatsListWidget(MinecraftClient client, int width, int height, int top, int itemHeight, int headerHeight) {
+public class CompactPlayerListWidget extends EntryListWidget<CompactPlayerListWidget.Entry> {
+    public CompactPlayerListWidget(MinecraftClient client, int width, int height, int top, int itemHeight, int headerHeight) {
         super(client, width, height, top, itemHeight, headerHeight);
     }
 
@@ -46,8 +47,8 @@ public class StatsListWidget extends EntryListWidget<StatsListWidget.Entry> {
 
     public static class Entry extends EntryListWidget.Entry<Entry> {
         private final MinecraftClient client;
-        final String name;
-        final PlayerStats stats;
+        public final String name;
+        public final PlayerStats stats;
 
         public Entry(MinecraftClient client, String name, PlayerStats stats) {
             this.client = client;
@@ -97,7 +98,7 @@ public class StatsListWidget extends EntryListWidget<StatsListWidget.Entry> {
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (button == 0) { // left click
-                MinecraftClient.getInstance().setScreen(new NoteScreen(name, "full"));
+                MinecraftClient.getInstance().setScreen(new PlayerEditScreen(name, "full", stats.note));
                 return true;
             }
             return false;

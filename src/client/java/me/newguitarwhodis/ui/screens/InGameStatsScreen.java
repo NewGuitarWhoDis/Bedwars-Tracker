@@ -1,18 +1,18 @@
-package me.newguitarwhodis.ui;
+package me.newguitarwhodis.ui.screens;
 
-import me.newguitarwhodis.stats.StatsDatabase;
-import me.newguitarwhodis.stats.PlayerStats;
+import me.newguitarwhodis.database.StatsDatabase;
+import me.newguitarwhodis.database.PlayerStats;
+import me.newguitarwhodis.ui.components.PlayerListWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
-public class StatScreen extends Screen {
+public class InGameStatsScreen extends Screen {
     private PlayerListWidget playerList;
 
-    public StatScreen() {
+    public InGameStatsScreen() {
         super(Text.literal("Bedwars Stats Tracker"));
     }
 
@@ -42,7 +42,7 @@ public class StatScreen extends Screen {
 
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Full Stats"), button -> {
             assert this.client != null;
-            this.client.setScreen(new FullStatsScreen());
+            this.client.setScreen(new DatabaseScreen());
         }).dimensions(this.width - 110, this.height - 30, 100, 20).build());
 
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Close"), button -> {

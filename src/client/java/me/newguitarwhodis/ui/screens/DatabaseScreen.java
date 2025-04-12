@@ -1,7 +1,8 @@
-package me.newguitarwhodis.ui;
+package me.newguitarwhodis.ui.screens;
 
-import me.newguitarwhodis.stats.PlayerStats;
-import me.newguitarwhodis.stats.StatsDatabase;
+import me.newguitarwhodis.database.PlayerStats;
+import me.newguitarwhodis.database.StatsDatabase;
+import me.newguitarwhodis.ui.components.CompactPlayerListWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -11,11 +12,11 @@ import net.minecraft.text.Text;
 import java.util.Comparator;
 import java.util.Map;
 
-public class FullStatsScreen extends Screen {
-    private StatsListWidget listWidget;
+public class DatabaseScreen extends Screen {
+    private CompactPlayerListWidget listWidget;
     private TextFieldWidget searchBox;
 
-    public FullStatsScreen() {
+    public DatabaseScreen() {
         super(Text.literal("All Player Stats"));
     }
 
@@ -45,7 +46,7 @@ public class FullStatsScreen extends Screen {
     protected void init() {
         int top = 75;
 
-        listWidget = new StatsListWidget(this.client, this.width, this.height - 115, top, 14, 2);
+        listWidget = new CompactPlayerListWidget(this.client, this.width, this.height - 115, top, 14, 2);
         this.addSelectableChild(listWidget);
 
         for (Map.Entry<String, PlayerStats> entry : StatsDatabase.getAll().entrySet()) {
@@ -55,7 +56,7 @@ public class FullStatsScreen extends Screen {
         // Back button
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Back"), btn -> {
             assert this.client != null;
-            this.client.setScreen(new StatScreen());
+            this.client.setScreen(new InGameStatsScreen());
         }).dimensions(10, this.height - 30, 80, 20).build());
 
         int boxWidth = 120;

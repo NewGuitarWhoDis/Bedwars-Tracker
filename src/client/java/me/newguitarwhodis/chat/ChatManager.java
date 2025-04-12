@@ -1,13 +1,11 @@
-package me.newguitarwhodis.chatmanager;
+package me.newguitarwhodis.chat;
 
-import me.newguitarwhodis.BedwarsTracker;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
-import me.newguitarwhodis.stats.StatsDatabase;
-import me.newguitarwhodis.stats.PlayerStats;
-import net.minecraft.text.Text;
+import me.newguitarwhodis.database.StatsDatabase;
+import me.newguitarwhodis.database.PlayerStats;
 
-public class ChatHook {
+public class ChatManager {
 
     public static void register() {
         // Keep this if you want to catch any system messages that DO come through
