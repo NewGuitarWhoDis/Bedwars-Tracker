@@ -40,14 +40,22 @@ public class InGameStatsScreen extends Screen {
         playerList.sortByKD();
         this.addSelectableChild(playerList);
 
+        // Database Button
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Full Stats"), button -> {
             assert this.client != null;
             this.client.setScreen(new DatabaseScreen());
         }).dimensions(this.width - 110, this.height - 30, 100, 20).build());
 
+        // Settings Button
+        this.addDrawableChild(ButtonWidget.builder(Text.literal("Settings"), button -> {
+            assert this.client != null;
+            this.client.setScreen(new SettingsScreen());
+        }).dimensions(this.width - 220, this.height - 30, 100, 20).build());
+
+        // Close Button
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Close"), button -> {
             if (this.client != null) {
-                this.client.setScreen(null); // ✅ Close the screen
+                this.client.setScreen(null);
             }
         }).dimensions(10, this.height - 30, 80, 20).build());
     }

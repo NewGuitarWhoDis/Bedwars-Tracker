@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import me.newguitarwhodis.database.StatsDatabase;
 import me.newguitarwhodis.database.PlayerStats;
+import net.minecraft.text.Text;
 
 public class ChatManager {
 
@@ -53,15 +54,15 @@ public class ChatManager {
 
                     StatsDatabase.save();
                 }
-                else if (isOnlinePlayer(victim) &&  (killer == "void")) {
+                else if (isOnlinePlayer(victim) &&  (killer.equals("void"))) {
                     PlayerStats victimStats = StatsDatabase.get(victim);
                     victimStats.voidDeaths++;
                     StatsDatabase.save();
                 }
                 else {
 //                    MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
-//                        Text.literal("not a player name")
-//                );
+//                        Text.literal("not a player name " + killer + " " + victim)
+//                    );
                 }
             }
         } else if (raw.endsWith("!")) {
@@ -96,32 +97,35 @@ public class ChatManager {
         if (raw.contains("The game starts in 1 second!")) {
 
             // Run the task after 1 second (20 ticks)
-            client.execute(() -> {
-                try {
-                    Thread.sleep(2000); // wait 1 second
-                } catch (InterruptedException ignored) {
-                }
 
-                if (client.getNetworkHandler() == null || client.player == null) return;
+            // FIX THIS AT SOME POINT IT CAUSES NETWORK ERRORS
 
-                StringBuilder knownPlayers = new StringBuilder();
-                for (var entry : client.getNetworkHandler().getPlayerList()) {
-                    String name = entry.getProfile().getName();
-                    if (!name.equals(client.player.getName().getString()) && StatsDatabase.contains(name)) {
-                        if (!knownPlayers.isEmpty()) knownPlayers.append(", ");
-                        knownPlayers.append(name);
-                    }
-                }
-
-                if (!knownPlayers.isEmpty()) {
-                    String title = "You have played against:";
-                    String message = knownPlayers.toString();
-
-                    // Display notification via your notification renderer
-                    ScreenNotificationRenderer.INSTANCE
-                            .show(100, title, message, null);
-                }
-            });
+//            client.execute(() -> {
+//                try {
+//                    Thread.sleep(2000); // wait 1 second
+//                } catch (InterruptedException ignored) {
+//                }
+//
+//                if (client.getNetworkHandler() == null || client.player == null) return;
+//
+//                StringBuilder knownPlayers = new StringBuilder();
+//                for (var entry : client.getNetworkHandler().getPlayerList()) {
+//                    String name = entry.getProfile().getName();
+//                    if (!name.equals(client.player.getName().getString()) && StatsDatabase.contains(name)) {
+//                        if (!knownPlayers.isEmpty()) knownPlayers.append(", ");
+//                        knownPlayers.append(name);
+//                    }
+//                }
+//
+//                if (!knownPlayers.isEmpty()) {
+//                    String title = "You have played against:";
+//                    String message = knownPlayers.toString();
+//
+//                    // Display notification via your notification renderer
+//                    ScreenNotificationRenderer.INSTANCE
+//                            .show(100, title, message, null);
+//                }
+//            });
         }
     }
 

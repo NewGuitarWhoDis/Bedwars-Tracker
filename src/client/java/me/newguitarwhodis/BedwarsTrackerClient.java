@@ -2,6 +2,9 @@ package me.newguitarwhodis;
 
 import me.newguitarwhodis.interactions.KeyboardManager;
 import me.newguitarwhodis.database.StatsDatabase;
+import me.newguitarwhodis.ui.HudWidgets.TeamStatsWidget;
+import me.newguitarwhodis.ui.HudWidgets.TopPlayerWidget;
+import me.newguitarwhodis.ui.HudWidgets.YourStatsWidget;
 import me.newguitarwhodis.ui.notifications.ScreenNotificationRenderer;
 import me.newguitarwhodis.ui.screens.InGameStatsScreen;
 import net.fabricmc.api.ClientModInitializer;
@@ -16,17 +19,16 @@ public class BedwarsTrackerClient implements ClientModInitializer {
 		StatsDatabase.load();
 		KeyboardManager.register();
 
-		Runtime.getRuntime().addShutdownHook(new Thread(StatsDatabase::save));
+		// Hud Rendering
+		HudRenderCallback.EVENT.register(new YourStatsWidget());
+		HudRenderCallback.EVENT.register(new TopPlayerWidget());
+		HudRenderCallback.EVENT.register(new TeamStatsWidget());
 
-		HudRenderCallback.EVENT.register((context, tickDelta) -> {
-			ScreenNotificationRenderer.INSTANCE.render(context, MinecraftClient.getInstance());
-		});
+		Runtime.getRuntime().addShutdownHook(new Thread(StatsDatabase::save));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (KeyboardManager.OPEN_GUI.wasPressed()) {
 				client.setScreen(new InGameStatsScreen());
-//				ScreenNotificationRenderer.INSTANCE
-//						.show(100, "test", "test", null);
 			}
 		});
 	}
