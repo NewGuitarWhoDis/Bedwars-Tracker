@@ -11,10 +11,22 @@ import net.minecraft.text.Text;
 
 import java.util.Map;
 
+/**
+ * Renders the "Top Player" widget showing the highest K/D player.
+ */
 public class TopPlayerWidget implements HudRenderCallback {
+
+    private static final int PADDING = 6;
+    private static final int TITLE_HEIGHT = 12;
+    private static final int LINE_HEIGHT = 10;
+
+    private static String cachedStatLine = "SampleName (K/D: 99.99)";
+    private static int cachedWidth = -1;
+
     @Override
     public void onHudRender(DrawContext context, RenderTickCounter tickCounter) {
         if (!WidgetManager.showTopPlayer) return;
+
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) return;
 
@@ -22,10 +34,11 @@ public class TopPlayerWidget implements HudRenderCallback {
         String topPlayer = null;
         double topKD = -1;
 
-        for (Map.Entry<String, PlayerStats> entry : allStats.entrySet()) {
+        for (var entry : allStats.entrySet()) {
             PlayerStats stats = entry.getValue();
-            if (stats.totalDeaths == 0 && stats.totalKills == 0) continue; // skip players with no data
-            double kd = (stats.totalDeaths == 0) ? stats.totalKills : (double) stats.totalKills / stats.totalDeaths;
+            if (stats.totalKills == 0 && stats.totalDeaths == 0) continue;
+
+            double kd = stats.totalDeaths == 0 ? stats.totalKills : (double) stats.totalKills / stats.totalDeaths;
 
             if (kd > topKD) {
                 topKD = kd;
@@ -33,42 +46,40 @@ public class TopPlayerWidget implements HudRenderCallback {
             }
         }
 
-        if (topPlayer == null) return; // no valid player found
+        if (topPlayer == null) return;
 
         int[] pos = WidgetPosition.get("top_player");
         int x = pos[0];
         int y = pos[1];
-        int padding = 6;
 
-        String title = "Top Player";
-        String statLine = topPlayer + " (K/D: " + String.format("%.2f", topKD) + ")";
-        int width = Math.max(
-                client.textRenderer.getWidth(title),
-                client.textRenderer.getWidth(statLine)
-        ) + padding * 2;
+        String title = "Top Player:";
+        cachedStatLine = topPlayer + " (K/D: " + String.format("%.2f", topKD) + ")";
 
-        int height = 30;
+        int textWidth = getAccurateWidth(client);
+        int height = TITLE_HEIGHT + LINE_HEIGHT + PADDING * 2;
 
-        // Draw background box
-        context.fill(x, y, x + width, y + height, 0xAA000000);
+        // Draw background
+        context.fill(x, y, x + textWidth, y + height, 0xAA000000);
 
-        // Draw title + info
-        context.drawText(client.textRenderer, Text.literal(title), x + padding, y + 4, 0xFFFF55, false);
-        context.drawText(client.textRenderer, Text.literal(statLine), x + padding, y + 16, 0xFFFFFF, false);
+        int textX = x + PADDING;
+        int textY = y + PADDING;
+
+        context.drawText(client.textRenderer, Text.literal(title), textX, textY, 0xFFFF55, false);
+        context.drawText(client.textRenderer, Text.literal(cachedStatLine), textX, textY + TITLE_HEIGHT, 0xFFFFFF, false);
     }
 
     public static int getWidth(MinecraftClient client) {
-        String title = "Top Player";
-        String sampleStatLine = "SampleName (K/D: 99.99)";
-        int padding = 6;
-
-        int titleWidth = client.textRenderer.getWidth(title);
-        int lineWidth = client.textRenderer.getWidth(sampleStatLine);
-
-        return Math.max(titleWidth, lineWidth) + padding * 2;
+        return getAccurateWidth(client);
     }
 
     public static int getHeight() {
-        return 12 + 10 + 8; // Title + stat line + some vertical spacing
+        return TITLE_HEIGHT + LINE_HEIGHT + PADDING * 2;
+    }
+
+    private static int getAccurateWidth(MinecraftClient client) {
+        int titleW = client.textRenderer.getWidth("Top Player:");
+        int lineW = client.textRenderer.getWidth(cachedStatLine);
+        cachedWidth = Math.max(titleW, lineW) + PADDING * 2;
+        return cachedWidth;
     }
 }

@@ -9,77 +9,77 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
 
+/**
+ * Renders the "Your Stats" widget on the HUD.
+ */
 public class YourStatsWidget implements HudRenderCallback {
 
+    private static final int PADDING = 6;
+    private static final int LINE_HEIGHT = 10;
+    private static final int TITLE_HEIGHT = 12;
+
+    private static final String[] SAMPLE_LINES = {
+            "Kills: 000",
+            "Deaths: 000",
+            "Void Deaths: 000",
+            "K/D: 00.00"
+    };
+
     @Override
-    public void onHudRender(DrawContext drawContext, RenderTickCounter tickCounter) {
+    public void onHudRender(DrawContext context, RenderTickCounter tickCounter) {
         if (!WidgetManager.showStats) return;
+
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) return;
 
-        String playerName = client.player.getName().getString();
-        PlayerStats stats = StatsDatabase.get(playerName);
+        String name = client.player.getName().getString();
+        PlayerStats stats = StatsDatabase.get(name);
 
-        // Text + box position
         int[] pos = WidgetPosition.get("your_stats");
         int x = pos[0];
         int y = pos[1];
-        int lineHeight = 10;
-        int padding = 6;
 
+        String title = "Your Stats:";
         String[] lines = {
                 "Kills: " + stats.totalKills,
                 "Deaths: " + stats.totalDeaths,
                 "Void Deaths: " + stats.voidDeaths,
-                "K/D: " + String.format("%.2f", (stats.totalDeaths == 0 ? stats.totalKills : (double) stats.totalKills / stats.totalDeaths))
+                "K/D: " + String.format("%.2f", stats.totalDeaths == 0
+                        ? stats.totalKills
+                        : (double) stats.totalKills / stats.totalDeaths)
         };
 
-        String title = "Your Stats:";
-        int titleHeight = 12;
+        int maxWidth = getMaxLineWidth(client, lines, title);
+        int boxWidth = maxWidth + PADDING * 2;
+        int boxHeight = TITLE_HEIGHT + (lines.length * LINE_HEIGHT) + PADDING * 2;
 
-        // Get the widest line for background
-        int maxWidth = client.textRenderer.getWidth(title);
+        context.fill(x, y, x + boxWidth, y + boxHeight, 0xAA000000);
+
+        int textX = x + PADDING;
+        int textY = y + PADDING;
+
+        context.drawText(client.textRenderer, Text.literal(title), textX, textY, 0xFFFF55, false);
+        textY += TITLE_HEIGHT;
+
         for (String line : lines) {
-            int width = client.textRenderer.getWidth(line);
-            if (width > maxWidth) maxWidth = width;
-        }
-
-        // Draw background
-        int boxWidth = maxWidth + padding * 2;
-        int boxHeight = lines.length * lineHeight + titleHeight + padding * 2;
-        drawContext.fill(x - padding, y - padding, x - padding + boxWidth, y - padding + boxHeight, 0xAA000000);
-
-        // Draw title
-        drawContext.drawText(client.textRenderer, Text.literal(title), x, y, 0xFFFF55, false);
-
-        // Draw stat lines
-        int textY = y + titleHeight;
-        for (String line : lines) {
-            drawContext.drawText(client.textRenderer, Text.literal(line), x, textY, 0xFFFFFF, false);
-            textY += lineHeight;
+            context.drawText(client.textRenderer, Text.literal(line), textX, textY, 0xFFFFFF, false);
+            textY += LINE_HEIGHT;
         }
     }
 
     public static int getWidth(MinecraftClient client) {
-        int padding = 6;
-        String[] lines = {
-                "Kills: 000",
-                "Deaths: 000",
-                "Void Deaths: 000",
-                "K/D: 00.00"
-        };
-
-        int maxWidth = client.textRenderer.getWidth("Your Stats:");
-        for (String line : lines) {
-            int width = client.textRenderer.getWidth(line);
-            if (width > maxWidth) maxWidth = width;
-        }
-
-        return maxWidth + padding * 2;
+        return getMaxLineWidth(client, SAMPLE_LINES, "Your Stats:") + PADDING * 2;
     }
 
     public static int getHeight() {
-        return 12 + (4 * 10) + 12; // title + 4 lines + padding
+        return TITLE_HEIGHT + (4 * LINE_HEIGHT) + PADDING * 2;
     }
 
+    private static int getMaxLineWidth(MinecraftClient client, String[] lines, String title) {
+        int maxWidth = client.textRenderer.getWidth(title);
+        for (String line : lines) {
+            maxWidth = Math.max(maxWidth, client.textRenderer.getWidth(line));
+        }
+        return maxWidth;
+    }
 }

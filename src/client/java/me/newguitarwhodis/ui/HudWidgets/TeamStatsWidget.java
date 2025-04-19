@@ -12,7 +12,6 @@ public class TeamStatsWidget implements HudRenderCallback {
     @Override
     public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
 
-
 //        SkinTextures SkinTexture = MinecraftClient.getInstance().player.getSkinTextures();
 //        PlayerSkinDrawer.draw(drawContext, SkinTexture, 0, 0, 16);
     }
