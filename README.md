@@ -47,7 +47,7 @@
 
 ## 📥 Download
 
-> 📦 [**Download Bedwars Tracker**](https://your-mod-link.com/bedwars-tracker.zip)
+> 📦 [**Download Bedwars Tracker**](https://github.com/NewGuitarWhoDis/Bedwars-Tracker/releases)
 
 ---
 
