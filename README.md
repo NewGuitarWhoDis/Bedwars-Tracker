@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="https://i.imgur.com/kNri6KC.png" alt="Bedwars Tracker Logo" width="160">
+  <img src="https://i.imgur.com/9aZvwFr.png" alt="Bedwars Tracker Logo" width="100%">
 </p>
-
-<h1 align="center">Bedwars Tracker</h1>
 
 <p align="center">
   <strong>A minimal Minecraft 1.21.5 Fabric mod for tracking your Hypixel Bedwars stats.</strong>
