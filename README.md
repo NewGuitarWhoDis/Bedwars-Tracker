@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="[bedwars-logo.png](https://i.imgur.com/kNri6KC.png)" alt="Bedwars Tracker Logo" width="160">
+  <img src="https://i.imgur.com/kNri6KC.png" alt="Bedwars Tracker Logo" width="160">
 </p>
 
 <h1 align="center">Bedwars Tracker</h1>
